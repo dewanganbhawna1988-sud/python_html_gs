@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Requirement Form</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+          .container1 {
+            width: 50%;
+            max-width: 700px;
+            margin: auto;
+        }
+
+         .container2 {
+            width: 85%;
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: #667eea;
+        }
+
+        .top-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            
+        }
+
+        th {
+            background: #2d3748;
+            color: white;
+            padding: 10px;
+        }
+
+        td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+        }
+
+        .form-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .form-header input {
+            width: 200px;
+        }
+
+        .add-row {
+            margin-top: 15px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 25px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .top-bar .btn {
+            margin-left: 10px;
+        }
+
+        .btn {
+            border-radius: 8px;
+        }
+
+        .table-container {
+             max-height: 400px;
+             overflow-y: auto;
+             border: 1px solid #ccc;
+        }
+
+        .table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+
+        /* ✅ STICKY HEADER */
+            .table thead th {
+             position: sticky;
+             top: 0;
+             background: #2d3748 !important;
+             color: white;
+             z-index: 10;
+        }
+
+        /* extra safety */
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+            
+    </style>
+</head>
+
+<body>
+
+ <div class="top-bar">
+    <div></div>
+
+    <div>
+        <a href="/home">
+            <button class="btn btn-primary btn-sm">🏠 Home</button>
+        </a>
+
+        <a href="/logout">
+            <button class="btn btn-danger btn-sm">Logout</button>
+        </a>
+    </div>
+</div>
+
+<div class="container1">
+
+<h2>Requirement Form (Branch: {{ branch }})</h2>
+
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+
+<form method="POST" onsubmit="return validateForm()">
+
+    <div class="form-header">
+        <input type="text" value="{{ uid }}" readonly placeholder="UID">
+    </div>
+
+    <label>Order Person Name</label>
+    <input type="text" name="orderpersonname" required>
+
+    <label>Contact</label>
+    <input type="text" id="contact" name="contact" maxlength="10" onkeyup="validateContact()" required>
+    <div id="contact_error" class="error"></div>
+
+    <div class="add-row">
+        <button type="button" class="btn" onclick="addRow()">+ Add Row</button>
+        <button type="submit" class="btn">Submit</button>
+        <button type="button" class="btn-danger" onclick="resetForm()">Reset</button>
+    </div>
+</div>
+
+<div class="container2">  
+
+    <table id="formTable">
+        <tr>
+            <th>Sub ID</th>
+            <th>Item</th>
+            <th>Brand</th>
+            <th>Design</th>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Pattern</th>
+            <th>Size</th>
+            <th>Qty</th>
+            <th>Action</th>
+        </tr>
+ 
+        <tr>
+    <td><input type="text" name="sub_id[]" class="sub_id" value="{{ sub_id }}" readonly></td>
+    <td><select name="item[]" onchange="loadBrands(this)"></select></td>
+    <td><select name="brand[]" onchange="loadDesigns(this)"><option>Brand</option></select></td>
+    <td><select name="design[]" onchange="loadTypes(this)"><option>Design</option></select></td>
+    <td><select name="type[]" onchange="loadCategories(this)"><option>Type</option></select></td>
+    <td><select name="category[]" onchange="loadPatterns(this)"><option>Category</option></select></td>
+    <td><select name="pattern[]" onchange="loadSizes(this)"><option>Pattern</option></select></td>
+    <td><select name="size[]"><option>Size</option></select></td>
+    <td>
+        <input type="text" name="qty[]" onkeyup="validateQty(this)">
+        <div class="error qty_error"></div>
+    </td>
+
+    <!-- ✅ DELETE BUTTON -->
+    <td>
+        <button type="button" onclick="deleteRow(this)" style="
+            background:#e53e3e;
+            color:white;
+            border:none;
+            padding:6px 10px;
+            border-radius:6px;
+            cursor:pointer;
+        ">X</button>
+    </td>
+</tr>
+
+    </div>
+    </table>  
+    </div>  
+
+</form>
+
+<hr>
+
+<h2>Saved Data</h2>
+
+<div class="table-container">
+<table class="table">
+
+    <thead>
+        <tr>
+            <th>SR NO</th>               
+            <th>TIMESTAMP</th>
+            <th>UID</th>
+            <th>SUB ID</th>
+            <th>BRANCH</th>
+            <th>ORDER PERSON</th>
+            <th>CONTACT</th>
+            <th>ITEM</th>
+            <th>BRAND</th>
+            <th>DESIGN</th>
+            <th>TYPE</th>
+            <th>CATEGORY</th>
+            <th>PATTERN</th>
+            <th>SIZE</th>
+            <th>QTY</th>
+            <th>FULFILL USER</th>
+            <th>STATUS</th>
+        </tr>
+    </thead>
+
+    <!-- ✅ BODY -->
+    <tbody>
+    {% for row in data %}
+    <tr>
+        <td>{{ loop.index }}</td>  <!-- ✅ SR NO -->
+
+        {% for col in row[:16] %}
+        <td>{{ col }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</tbody>
+
+</table>
+</div>
+
+<script>
+
+    function deleteRow(btn) {
+    let row = btn.closest("tr");
+    let table = document.getElementById("formTable");
+
+    // minimum 1 row rehna chahiye
+    if (table.rows.length > 2) {
+        row.remove();
+    } else {
+        alert("At least one row required");
+    }
+}
+
+let masterData = {};
+let currentSubId = 0;
+
+// LOAD ITEMS
+fetch('/requirement_dependent_last_field/get-items')
+.then(res => res.json())
+.then(data => {
+    masterData = data;
+
+    let firstSelect = document.querySelector("select[name='item[]']");
+    loadItems(firstSelect);
+});
+
+// INIT SUB ID
+document.addEventListener("DOMContentLoaded", function () {
+    let firstSub = document.querySelector(".sub_id");
+    currentSubId = firstSub && firstSub.value ? parseInt(firstSub.value) || 0 : 0;
+});
+
+// ITEM LOAD
+function loadItems(select) {
+    select.innerHTML = "<option value=''>Select Item</option>";
+    for (let item in masterData) {
+        select.innerHTML += `<option value="${item}">${item}</option>`;
+    }
+}
+
+// CONTACT
+function validateContact() {
+    let c = document.getElementById("contact").value;
+    let e = document.getElementById("contact_error");
+
+    if (!/^[0-9]*$/.test(c)) {
+        e.innerText = "Only numbers allowed";
+        return false;
+    }
+
+    if (c.length < 10) {
+        e.innerText = "Must be 10 digits";
+        return false;
+    }
+
+    e.innerText = "";
+    return true;
+}
+
+// QTY
+function validateQty(input) {
+    let error = input.parentNode.querySelector(".qty_error");
+
+    if (!/^[0-9]*$/.test(input.value)) {
+        error.innerText = "Only numbers allowed";
+        return false;
+    }
+
+    error.innerText = "";
+    return true;
+}
+
+// FORM VALIDATION
+function validateForm() {
+    let valid = validateContact();
+
+    document.querySelectorAll("input[name='qty[]']").forEach(q => {
+        if (!validateQty(q)) valid = false;
+    });
+
+    return valid;
+}
+
+// ADD ROW
+function addRow() {
+    let table = document.getElementById("formTable");
+    let row = table.rows[1].cloneNode(true);
+
+    currentSubId++;
+
+    row.querySelectorAll("input").forEach(i => i.value = "");
+
+    let sub = row.querySelector(".sub_id");
+    if (sub) sub.value = currentSubId;
+
+    row.querySelectorAll("select").forEach(s => s.innerHTML = "<option>Select</option>");
+
+    table.appendChild(row);
+
+    loadItems(row.querySelector("select[name='item[]']"));
+}
+
+// (same dependency functions kept as-is)
+
+function loadBrands(el){ let row=el.closest("tr"); let brand=row.querySelector("select[name='brand[]']"); brand.innerHTML="<option>Brand</option>"; let item=el.value; if(!masterData[item])return; for(let b in masterData[item]) brand.innerHTML+=`<option>${b}</option>`; }
+
+function loadDesigns(el){ let row=el.closest("tr"); let item=row.querySelector("select[name='item[]']").value; let d=row.querySelector("select[name='design[]']"); d.innerHTML="<option>Design</option>"; if(!masterData[item][el.value])return; for(let x in masterData[item][el.value]) d.innerHTML+=`<option>${x}</option>`; }
+
+function loadTypes(el){ let row=el.closest("tr"); let item=row.querySelector("select[name='item[]']").value; let b=row.querySelector("select[name='brand[]']").value; let t=row.querySelector("select[name='type[]']"); t.innerHTML="<option>Type</option>"; if(!masterData[item][b][el.value])return; for(let x in masterData[item][b][el.value]) t.innerHTML+=`<option>${x}</option>`; }
+
+function loadCategories(el){ let row=el.closest("tr"); let item=row.querySelector("select[name='item[]']").value; let b=row.querySelector("select[name='brand[]']").value; let d=row.querySelector("select[name='design[]']").value; let c=row.querySelector("select[name='category[]']"); c.innerHTML="<option>Category</option>"; if(!masterData[item][b][d][el.value])return; for(let x in masterData[item][b][d][el.value]) c.innerHTML+=`<option>${x}</option>`; }
+
+function loadPatterns(el){ let row=el.closest("tr"); let item=row.querySelector("select[name='item[]']").value; let b=row.querySelector("select[name='brand[]']").value; let d=row.querySelector("select[name='design[]']").value; let t=row.querySelector("select[name='type[]']").value; let p=row.querySelector("select[name='pattern[]']"); p.innerHTML="<option>Pattern</option>"; if(!masterData[item][b][d][t][el.value])return; for(let x in masterData[item][b][d][t][el.value]) p.innerHTML+=`<option>${x}</option>`; }
+
+function loadSizes(el){ let row=el.closest("tr"); let item=row.querySelector("select[name='item[]']").value; let b=row.querySelector("select[name='brand[]']").value; let d=row.querySelector("select[name='design[]']").value; let t=row.querySelector("select[name='type[]']").value; let c=row.querySelector("select[name='category[]']").value; let s=row.querySelector("select[name='size[]']"); s.innerHTML="<option>Size</option>"; let sizes=masterData[item][b][d][t][c][el.value]||[]; sizes.forEach(x=>s.innerHTML+=`<option>${x}</option>`); }
+
+function resetForm() {
+
+    // 🔥 Clear Name & Contact
+    document.querySelector("input[name='orderpersonname']").value = "";
+    document.getElementById("contact").value = "";
+
+    // 🔥 Reset Table (only first row keep)
+    let table = document.getElementById("formTable");
+
+    while (table.rows.length > 2) {
+        table.deleteRow(2);
+    }
+
+    let firstRow = table.rows[1];
+
+    // 🔥 Reset inputs
+    firstRow.querySelectorAll("input").forEach(i => i.value = "");
+
+    // 🔥 Reset Sub ID
+    let firstSub = firstRow.querySelector(".sub_id");
+    currentSubId = parseInt(firstSub.defaultValue) || 0;
+    firstSub.value = currentSubId;
+
+    // 🔥 Reset dropdowns
+    firstRow.querySelectorAll("select").forEach(s => {
+        s.innerHTML = "<option>Select</option>";
+    });
+
+    // 🔥 Reload Items dropdown
+    loadItems(firstRow.querySelector("select[name='item[]']"));
+
+    // 🔥 Clear errors
+    document.getElementById("contact_error").innerText = "";
+    document.querySelectorAll(".qty_error").forEach(e => e.innerText = "");
+}
+
+</script>
+
+</body>
+</html>
+
