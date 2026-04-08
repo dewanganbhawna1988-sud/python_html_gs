@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, request, redirect, session
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import datetime
+import os
+import json
 
 stock_fulfill_bp = Blueprint('stock_fulfill_bp', __name__, url_prefix="/stock_fulfill")
 
@@ -13,8 +15,12 @@ scope = [
     "https://www.googleapis.com/auth/drive"
 ]
 
-creds = ServiceAccountCredentials.from_json_keyfile_name(
-    "pythonhtmlformgs-230b6b2a1e42.json", scope)
+#creds = ServiceAccountCredentials.from_json_keyfile_name(
+ #   "pythonhtmlformgs-230b6b2a1e42.json", scope)
+
+creds_dict = json.loads(os.environ.get("GOOGLE_CREDENTIALS"))
+
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 
 client = gspread.authorize(creds)
 
