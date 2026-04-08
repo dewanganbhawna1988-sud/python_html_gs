@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from flask import Blueprint, render_template, request, redirect, session
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -165,7 +164,6 @@ def save_dispatch():
 
                 break
 
-=======
 from flask import Blueprint, render_template, request, redirect, session
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -332,5 +330,4 @@ def save_dispatch():
 
                 break
 
->>>>>>> 4947770b7ba4b0344e6954f92e5b89d402830ddf
     return redirect("/stock_dispatch")

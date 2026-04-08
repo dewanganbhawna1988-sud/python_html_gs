@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from flask import Blueprint, render_template, request, redirect, session
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -292,7 +291,7 @@ def fulfil(uid, subid):
 @stock_fulfill_bp.route("/logout")
 def logout():
     session.clear()
-=======
+
 from flask import Blueprint, render_template, request, redirect, session
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -586,5 +585,4 @@ def fulfil(uid, subid):
 @stock_fulfill_bp.route("/logout")
 def logout():
     session.clear()
->>>>>>> 4947770b7ba4b0344e6954f92e5b89d402830ddf
     return redirect("/")
