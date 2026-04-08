@@ -1,0 +1,39 @@
+<form method="POST" action="/stock_dispatch/save_dispatch" enctype="multipart/form-data">
+
+  <!-- HIDDEN SELECTED IDS -->
+  {% for id in selected_ids %}
+    <input type="hidden" name="selected_ids" value="{{ id }}">
+  {% endfor %}
+
+  <!-- Dispatch Date -->
+  <label>Dispatch Date</label>
+  <input type="date" name="dispatch_date" required><br><br>
+
+  <!-- LR Number -->
+  <label>LR Number</label>
+  <input type="text" name="lr_num" required><br><br>
+
+  <!-- Transporter -->
+  <label>Transporter</label>
+  <select name="transporter" required>
+    <option value="">Select Transporter</option> <!-- 🔥 important -->
+    <option value="AAA">AAA</option>
+    <option value="BBB">BBB</option>
+  </select><br><br>
+
+  <!-- Parcel Qty -->
+  <label>Parcel Qty</label>
+  <input type="number" name="parcel_qty" min="1" required><br><br>
+
+  <!-- Photo -->
+  <label>Photo</label>
+  <input type="file" name="photo" required><br><br>
+
+  <!-- Remarks (NOT REQUIRED) -->
+  <label>Remarks</label>
+  <textarea name="remarks"></textarea><br><br>
+
+  <!-- Submit -->
+  <button type="submit">Submit</button>
+
+</form>

@@ -74,4 +74,8 @@ def logout():
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     app.run(debug=True)
+=======
+    app.run(debug=True)
+>>>>>>> 4947770b7ba4b0344e6954f92e5b89d402830ddf
