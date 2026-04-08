@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request, redirect, session
-from rolebasefootfall import rolebasefootfall_bp
-from requirement_only_item_depndency import requirement_only_item_depndency_bp
 from requirement_dependent_last_field import requirement_dependent_last_field_bp
 from stock_fulfill import stock_fulfill_bp
 from stock_dispatch import stock_dispatch_bp
@@ -9,9 +7,6 @@ from stock_dispatch import stock_dispatch_bp
 app = Flask(__name__)
 app.secret_key = "secret123"   # required for session
 
-app.register_blueprint(rolebasefootfall_bp, url_prefix='/rolebasefootfall')
-
-app.register_blueprint(requirement_only_item_depndency_bp, url_prefix='/requirement_only_item_depndency')   # 🔥 register
 app.register_blueprint(requirement_dependent_last_field_bp, url_prefix='/requirement_dependent_last_field')   # 🔥 register
 app.register_blueprint(stock_fulfill_bp, url_prefix='/stock_fulfill')   # 🔥 register
 app.register_blueprint(stock_dispatch_bp, url_prefix='/stock_dispatch')   # 🔥 register
