@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>STOCK REQUIREMENTS</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 20px;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            width: 80%;
+            margin: auto;
+            border-radius: 10px;
+        }
+
+        select, input {
+            padding: 6px;
+            margin: 5px;
+        }
+
+        .row {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>STOCK REQUIREMENTS</h2>
+
+<form method="POST">
+
+ID: <input type="text" value="{{ id }}" readonly><br><br>
+
+Branch:
+<select name="branch" required>
+    <option value="">Select</option>
+    <option>Raipur</option>
+    <option>Bhilai</option>
+    <option>Durg</option>
+</select><br><br>
+
+Name:
+<input type="text" name="cname" required>
+
+Contact:
+<input type="text" name="contact" maxlength="10" required><br><br>
+
+<!-- 🔥 ITEMS -->
+<div id="rows">
+
+<div class="row">
+    <select name="item[]" onchange="updateRow(this)">
+        <option value="">Item</option>
+    </select>
+
+    <select name="brand[]"><option>Brand</option></select>
+    <select name="design[]"><option>Design</option></select>
+    <select name="type[]"><option>Type</option></select>
+    <select name="category[]"><option>Category</option></select>
+    <select name="pattern[]"><option>Pattern</option></select>
+    <select name="size[]"><option>Size</option></select>
+
+    <input type="text" name="qty[]" placeholder="Qty">
+</div>
+
+</div>
+
+<button type="button" onclick="addRow()">+ Add</button>
+<button type="button" onclick="deleteRow()">❌ Delete</button>
+<br>
+<button type="submit">Submit</button>
+
+</form>
+
+</div>
+
+<script>
+
+let masterData = {};
+
+// 🔥 LOAD DATA
+window.onload = function() {
+    fetch('/requirement_only_item_depndency/get-items')  // 🔥 IMPORTANT FIX
+    .then(res => res.json())
+    .then(data => {
+        masterData = data;
+
+        let firstItemSelect = document.querySelector('select[name="item[]"]');
+
+        Object.keys(masterData).forEach(item => {
+            firstItemSelect.innerHTML += `<option value="${item}">${item}</option>`;
+        });
+    });
+};
+
+
+// 🔥 UPDATE DROPDOWN
+function updateRow(select) {
+
+    let row = select.parentElement;
+    let item = select.value;
+
+    let brand = row.children[1];
+    let design = row.children[2];
+    let type = row.children[3];
+    let category = row.children[4];
+    let pattern = row.children[5];
+    let size = row.children[6];
+
+    brand.innerHTML = "<option>Brand</option>";
+    design.innerHTML = "<option>Design</option>";
+    type.innerHTML = "<option>Type</option>";
+    category.innerHTML = "<option>Category</option>";
+    pattern.innerHTML = "<option>Pattern</option>";
+    size.innerHTML = "<option>Size</option>";
+
+    if (masterData[item]) {
+
+        masterData[item]["brand"].forEach(b => {
+            brand.innerHTML += `<option>${b}</option>`;
+        });
+
+        masterData[item]["design"].forEach(d => {
+            design.innerHTML += `<option>${d}</option>`;
+        });
+
+        masterData[item]["type"].forEach(t => {
+            type.innerHTML += `<option>${t}</option>`;
+        });
+
+        masterData[item]["category"].forEach(c => {
+            category.innerHTML += `<option>${c}</option>`;
+        });
+
+        masterData[item]["pattern"].forEach(p => {
+            pattern.innerHTML += `<option>${p}</option>`;
+        });
+
+        masterData[item]["size"].forEach(s => {
+            size.innerHTML += `<option>${s}</option>`;
+        });
+
+    }
+}
+
+
+// 🔥 ADD ROW
+function addRow() {
+
+    let div = document.createElement("div");
+    div.className = "row";
+
+    div.innerHTML = `
+        <select name="item[]" onchange="updateRow(this)">
+            <option value="">Item</option>
+        </select>
+
+        <select name="brand[]"><option>Brand</option></select>
+        <select name="design[]"><option>Design</option></select>
+        <select name="type[]"><option>Type</option></select>
+        <select name="category[]"><option>Category</option></select>
+        <select name="pattern[]"><option>Pattern</option></select>
+        <select name="size[]"><option>Size</option></select>
+
+        <input type="text" name="qty[]" placeholder="Qty">
+    `;
+
+    document.getElementById("rows").appendChild(div);
+
+    let newSelect = div.querySelector('select[name="item[]"]');
+
+    Object.keys(masterData).forEach(item => {
+        newSelect.innerHTML += `<option value="${item}">${item}</option>`;
+    });
+}
+
+
+// 🔥 DELETE ROW
+function deleteRow() {
+
+    let rows = document.getElementById("rows");
+
+    if (rows.children.length > 1) {
+        rows.removeChild(rows.lastElementChild);
+    } else {
+        alert("At least one row required!");
+    }
+}
+
+</script>
+
+</body>
+</html>

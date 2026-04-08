@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Footfall Entry</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .top-bar {
+            width: 80%;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .top-btn {
+            padding: 10px 20px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .home-btn { background: blue; }
+
+        .logout {
+            background: #dc3545;
+            padding: 10px 20px;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .form-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 40%;
+            margin: auto;
+            margin-bottom: 30px;
+        }
+
+        .table-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            margin: auto;
+        }
+
+        h2 { text-align: center; }
+
+        .form-group { margin-bottom: 12px; }
+
+        label {
+            display: block;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 7px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        select:disabled {
+            background-color: #eee;
+            cursor: not-allowed;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        button {
+            width: 48%;
+            padding: 10px;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .submit-btn { background: green; }
+        .reset-btn { background: red; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        .id-box {
+            background: #f1f1f1;
+            padding: 7px;
+            border-radius: 5px;
+        }
+
+        .error {
+            font-size: 12px;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="top-bar">
+    <a href="/home"><button class="top-btn home-btn">🏠 Home</button></a>
+    <a href="/logout"><button class="logout">🚪 Logout</button></a>
+</div>
+
+<div class="form-box">
+    <h2>FOOTFALL ENTRY ({{ user }})</h2>
+
+    <form method="POST" onsubmit="return validateForm()">
+
+        <!-- ID -->
+        <div class="form-group">
+            <label>ID</label>
+            <input type="text" name="id" value="{{ id }}" readonly class="id-box">
+        </div>
+
+        <!-- Branch -->
+        <div class="form-group">
+            <label>Branch</label>
+
+            {% if role == 'admin' %}
+                <select name="branch" required>
+                    <option value="">Select</option>
+                    <option value="ambikapur" {% if branch_fixed == 'ambikapur' %}selected{% endif %}>Ambikapur</option>
+                    <option value="bhilai" {% if branch_fixed == 'bhilai' %}selected{% endif %}>Bhilai</option>
+                    <option value="bilaspur" {% if branch_fixed == 'bilaspur' %}selected{% endif %}>Bilaspur</option>
+                    <option value="durg" {% if branch_fixed == 'durg' %}selected{% endif %}>Durg</option>
+                    <option value="jabalpur" {% if branch_fixed == 'jabalpur' %}selected{% endif %}>Jabalpur</option>
+                    <option value="pulgaon1" {% if branch_fixed == 'pulgaon1' %}selected{% endif %}>Pulgaon1</option>
+                    <option value="pulgaon2" {% if branch_fixed == 'pulgaon2' %}selected{% endif %}>Pulgaon2</option>
+                    <option value="raipur" {% if branch_fixed == 'raipur' %}selected{% endif %}>Raipur</option>
+                    <option value="rajnandgaon" {% if branch_fixed == 'rajnandgaon' %}selected{% endif %}>Rajnandgaon</option>
+                    <option value="rewa" {% if branch_fixed == 'rewa' %}selected{% endif %}>Rewa</option>
+                </select>
+
+            {% else %}
+                <select disabled>
+                    <option selected>{{ branch_fixed }}</option>
+                </select>
+                <input type="hidden" name="branch" value="{{ branch_fixed }}">
+            {% endif %}
+
+        </div>
+
+        <!-- Name -->
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" required>
+        </div>
+
+        <!-- Contact -->
+        <div class="form-group">
+            <label>Contact</label>
+            <input type="text" id="contact" name="contact" maxlength="10" required>
+            <span id="contact_error" class="error"></span>
+        </div>
+
+        <!-- Address -->
+        <div class="form-group">
+            <label>Address</label>
+            <input type="text" name="address" required>
+        </div>
+
+        <!-- Members -->
+        <div class="form-group">
+            <label>Total Members</label>
+            <input type="text" id="members" name="members" required>
+            <span id="member_error" class="error"></span>
+        </div>
+
+        <!-- Buttons -->
+        <div class="btn-group">
+            <button type="submit" class="submit-btn">Submit</button>
+            <button type="reset" class="reset-btn">Reset</button>
+        </div>
+
+    </form>
+</div>
+
+<div class="table-box">
+    <h2>Data Table</h2>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Branch</th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Address</th>
+            <th>Members</th>
+        </tr>
+
+        {% for row in data %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+            <td>{{ row[5] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<script>
+function validateContact() {
+    let c = document.getElementById("contact").value;
+    let e = document.getElementById("contact_error");
+
+    if (!/^[0-9]*$/.test(c)) {
+        e.innerText = "Only numbers allowed";
+        return false;
+    }
+    if (c.length != 10) {
+        e.innerText = "Must be 10 digits";
+        return false;
+    }
+    e.innerText = "";
+    return true;
+}
+
+function validateMembers() {
+    let m = document.getElementById("members").value;
+    let e = document.getElementById("member_error");
+
+    if (!/^[0-9]*$/.test(m)) {
+        e.innerText = "Only numbers allowed";
+        return false;
+    }
+    e.innerText = "";
+    return true;
+}
+
+function validateForm() {
+    return validateContact() && validateMembers();
+}
+</script>
+
+</body>
+</html>

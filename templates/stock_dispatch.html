@@ -1,0 +1,39 @@
+<form method="POST" action="/stock_dispatch/bulk_dispatch">
+
+<table border="1" class="table">
+
+  <!-- HEADER -->
+  <tr>
+    {% for i in range(headers|length) %}
+      {% if headers[i] != 'STATUS' %}
+        <th>{{ headers[i] }}</th>
+      {% endif %}
+    {% endfor %}
+    <th>Select</th>
+  </tr>
+
+  <!-- DATA -->
+  {% for row in data %}
+  <tr>
+    {% for i in range(headers|length) %}
+      {% if headers[i] != 'STATUS' %}
+        <td>{{ row[i] }}</td>
+      {% endif %}
+    {% endfor %}
+
+    <td>
+      <input type="checkbox" name="selected_rows"
+      value="{{ row[0] }}|{{ row[1] }}">
+    </td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+<div style="text-align:center; margin-top:20px;">
+  <button type="submit" class="btn btn-primary">
+    🚚 Dispatch
+  </button>
+</div>
+
+</form>

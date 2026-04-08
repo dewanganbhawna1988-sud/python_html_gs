@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            border: none;
+            padding: 10px 18px;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            width: 380px;
+            text-align: center;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+            background: #007bff;
+        }
+
+        .footfall-btn { background: #28a745; }
+        .coming-btn { background: #6c757d; }
+        .fulfill-btn { background: #ff9800; }
+        .dispatch-btn { background: #6f42c1; }
+    </style>
+</head>
+
+<body>
+
+<div class="top-bar">
+    <div>🏠 Dashboard</div>
+    <a href="/logout">
+        <button class="logout-btn">Logout</button>
+    </a>
+</div>
+
+<div class="container">
+    <div class="box">
+
+        <div class="welcome-text">
+            Welcome 👋 {{ user }}
+        </div>
+
+        {% set procurement_users = ['nikita','vishal','minesh','mahaveer'] %}
+        {% set dispatch_user = 'manish' %}
+
+        <!-- ✅ MANISH ONLY -->
+        {% if user|lower == dispatch_user %}
+            
+            <a href="/stock_dispatch">
+                <button class="btn dispatch-btn">🚚 Stock Dispatch</button>
+            </a>
+
+        <!-- ✅ PROCUREMENT USERS -->
+        {% elif user|lower in procurement_users %}
+
+            <a href="/stock_fulfill">
+                <button class="btn fulfill-btn">📦 Stock Fulfill</button>
+            </a>
+
+        <!-- ✅ NORMAL USERS -->
+        {% else %}
+
+            <a href="/rolebasefootfall">
+                <button class="btn footfall-btn">📊 Role Base Footfall</button>
+            </a>
+
+            <a href="/requirement_only_item_depndency">
+                <button class="btn">📊 Requirements Only Item</button>
+            </a>
+
+            <a href="/requirement_dependent_last_field">
+                <button class="btn">📊 Requirements Last Field</button>
+            </a>
+
+            <button class="btn coming-btn" disabled>🧵 Stitching (Coming Soon)</button>
+
+        {% endif %}
+
+    </div>
+</div>
+
+</body>
+</html>
